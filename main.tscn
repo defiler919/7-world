@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://cc6tnm6h18qew"]
+
+[ext_resource type="Script" uid="uid://l014stvk4d3f" path="res://core/world/world_root.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://soitxrrm14hd" path="res://core/camera/world_camera.gd" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://b3q1w5et51wui" path="res://core/camera/camera_controller.gd" id="3_h2yge"]
+[ext_resource type="Script" uid="uid://d2b4p3p3bx5sb" path="res://debug/debug_overlay.gd" id="4_1bvp3"]
+
+[node name="Main" type="Node2D"]
+
+[node name="WorldRoot" type="Node" parent="."]
+script = ExtResource("1_ig7tw")
+
+[node name="WorldCamera" type="Camera2D" parent="."]
+position_smoothing_enabled = true
+script = ExtResource("2_0xm2m")
+
+[node name="CameraController" type="Node" parent="."]
+script = ExtResource("3_h2yge")
+camera_path = NodePath("../WorldCamera")
+world_root_path = NodePath("../WorldRoot")
+
+[node name="DebugOverlay" type="CanvasLayer" parent="."]
+script = ExtResource("4_1bvp3")
