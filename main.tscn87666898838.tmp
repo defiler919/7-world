@@ -1,13 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://cc6tnm6h18qew"]
+[gd_scene load_steps=6 format=3 uid="uid://cc6tnm6h18qew"]
 
 [ext_resource type="Script" uid="uid://l014stvk4d3f" path="res://core/world/world_root.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://soitxrrm14hd" path="res://core/camera/world_camera.gd" id="2_0xm2m"]
 [ext_resource type="Script" uid="uid://b3q1w5et51wui" path="res://core/camera/camera_controller.gd" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://d2b4p3p3bx5sb" path="res://debug/debug_overlay.gd" id="4_1bvp3"]
 [ext_resource type="Script" uid="uid://px2aewas5flh" path="res://core/time/world_clock.gd" id="5_lquwl"]
-[ext_resource type="Script" uid="uid://c6e6wujea2mi5" path="res://ecology/ecology_rules.gd" id="6_7mycd"]
-[ext_resource type="PackedScene" uid="uid://cxwa5qe0lfij5" path="res://layers/shallow_sea/shallow_sea_layer.tscn" id="7_272bh"]
-[ext_resource type="PackedScene" uid="uid://c4p5b5xcqfm1x" path="res://layers/deep_sea/deep_sea_layer.tscn" id="8_5vw27"]
 
 [node name="Main" type="Node2D"]
 
@@ -28,20 +25,6 @@ world_root_path = NodePath("../WorldRoot")
 [node name="DebugOverlay" type="CanvasLayer" parent="."]
 script = ExtResource("4_1bvp3")
 world_root_path = NodePath("../WorldRoot")
-ecology_rules_path = NodePath("../EcologyRules")
 
 [node name="WorldClock" type="Node" parent="."]
 script = ExtResource("5_lquwl")
-
-[node name="EcologyRules" type="Node" parent="."]
-script = ExtResource("6_7mycd")
-world_root_path = NodePath("../WorldRoot")
-clock_path = NodePath("../WorldClock")
-
-[node name="ShallowSeaLayer" parent="." instance=ExtResource("7_272bh")]
-ecology_rules_path = NodePath("../EcologyRules")
-clock_path = NodePath("../WorldClock")
-
-[node name="deep_sea_layer" parent="." instance=ExtResource("8_5vw27")]
-ecology_rules_path = NodePath("../EcologyRules")
-clock_path = NodePath("../WorldClock")

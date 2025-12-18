@@ -6,13 +6,25 @@
 [node name="ShallowSeaLayer" type="Node2D"]
 script = ExtResource("1_2g737")
 
+[node name="Background" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(10000, 3000)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 10000.0
+offset_bottom = 3000.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.42621717, 0.70652056, 0.9468052, 1)
+
 [node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
 scale = Vector2(10000, 3000)
 texture = ExtResource("2_idfvx")
 centered = false
 
 [node name="ColorRect" type="ColorRect" parent="."]
-custom_minimum_size = Vector2(50, 10000)
+custom_minimum_size = Vector2(40, 10000)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -20,14 +32,14 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = 5000.0
 offset_top = -5000.0
-offset_right = 5050.0
+offset_right = 5040.0
 offset_bottom = 5000.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.29803923, 1, 1, 1)
+color = Color(0.29803923, 0.90588236, 0.8352941, 1)
 
 [node name="ColorRect2" type="ColorRect" parent="."]
-custom_minimum_size = Vector2(50, 10000)
+custom_minimum_size = Vector2(20, 10000)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -35,22 +47,81 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = 2500.0
 offset_top = -5000.0
-offset_right = 2550.0
+offset_right = 2530.0
 offset_bottom = 5000.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.29803923, 1, 1, 1)
+color = Color(0.29803923, 0.7607843, 1, 1)
 
-[node name="ColorRect3" type="ColorRect" parent="."]
-custom_minimum_size = Vector2(50, 10000)
+[node name="ColorRect4" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(40, 10000)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
+offset_left = 7500.0
 offset_top = -5000.0
-offset_right = 50.0
+offset_right = 7540.0
 offset_bottom = 5000.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.29803923, 1, 1, 1)
+color = Color(0.29803923, 1, 0.21176471, 1)
+
+[node name="ColorRect5" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(40, 10000)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 9960.0
+offset_top = -5000.0
+offset_right = 10000.0
+offset_bottom = 5000.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.29803923, 0.14901961, 0.3372549, 1)
+
+[node name="ColorRect6" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(3000, 40)
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_right = 10000.0
+offset_bottom = 40.0
+grow_vertical = 0
+color = Color(0.29803923, 0.14901961, 0.3372549, 1)
+
+[node name="ColorRect7" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(3000, 40)
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = 1000.0
+offset_right = 10000.0
+offset_bottom = 1040.0
+grow_vertical = 0
+color = Color(0.29803923, 0.14901961, 0.3372549, 1)
+
+[node name="ColorRect9" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(3000, 40)
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = 2000.0
+offset_right = 10000.0
+offset_bottom = 2040.0
+grow_vertical = 0
+color = Color(0.12301708, 0.25567392, 0.13451329, 1)
+
+[node name="ColorRect8" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(3000, 40)
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = 2960.0
+offset_right = 10000.0
+offset_bottom = 3000.0
+grow_vertical = 0
+color = Color(0.22711003, 0.12097325, 0.49266464, 1)
