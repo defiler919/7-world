@@ -4,6 +4,17 @@ extends Node2D
 # 输入：生态“建议值”(Intent)、时间(WorldClock tick)。
 # 输出：LayerState（给 Debug / 未来 UI 用）。
 
+# --- Inertia tuning (seconds) ---
+@export var tau_spawn: float = 4.0        # spawn.* 快
+@export var tau_death: float = 8.0        # death.* 中
+@export var tau_budget: float = 10.0      # budget.* 中
+@export var tau_risk: float = 30.0        # invasion.risk 慢
+@export var tau_pollution: float = 45.0   # env.pollution 很慢（更“环境”）
+
+# 可选：整体快慢倍率（>1 更慢，<1 更快）
+@export var tau_global_mul: float = 1.0
+
+
 @export var layer_index: int = 0
 
 # --- Day4: Intent 惯性参数 ---
@@ -63,6 +74,28 @@ func _process(delta: float) -> void:
 	if _accum >= 1.0:
 		_accum -= 1.0
 		_on_tick_1s(layer_state.get("world_time", 0.0) + 1.0, 0)
+func _alpha(dt: float, tau: float) -> float:
+	var t: float = max(0.001, tau) * tau_global_mul
+	return 1.0 - exp(-dt / t)
+
+func _lerp_applied(key: String, target: float, a: float, default_val: float = 0.0) -> float:
+	var cur: float = float(_applied.get(key, default_val))
+	return lerp(cur, target, a)
+func _tau_for_key(key: String) -> float:
+	# 前缀分层：简单、直观、好维护
+	if key.begins_with("spawn."):
+		return tau_spawn
+	if key.begins_with("death."):
+		return tau_death
+	if key.begins_with("budget."):
+		return tau_budget
+	if key == "invasion.risk":
+		return tau_risk
+	if key == "env.pollution":
+		return tau_pollution
+
+	# 兜底：没归类的，给一个中等惯性
+	return 8.0
 
 func _on_tick_1s(world_time: float, _tick_index: int) -> void:
 	# 计算 dt（用于惯性）
@@ -79,46 +112,26 @@ func _on_tick_1s(world_time: float, _tick_index: int) -> void:
 	_apply_intent_with_inertia(intent, dt)
 
 func _apply_intent_with_inertia(intent: Dictionary, dt: float) -> void:
-	# version 直接记录（不做惯性）
+	# 你原来版本号那段照旧
 	layer_state["intent_version"] = int(intent.get("version", layer_state.get("intent_version", 0)))
 
-	# --- 显式 float，避免 Variant 推断 ---
-	var tau: float = maxf(0.001, float(intent_tau_seconds))
-	var alpha: float = 1.0 - exp(-dt / tau)
+	# 需要惯性的 keys 列表（按你 layer_state 里的字段来）
+	var keys: Array[String] = [
+		"spawn.fish_bias",
+		"spawn.algae_bias",
+		"death.fish_bias",
+		"invasion.risk",
+		"budget.spawn_points",
+		"env.pollution",
+	]
 
-	# 取值都强转为 float（关键）
-	var target_spawn_fish: float = float(intent.get("spawn.fish_bias", 0.0))
-	var target_spawn_algae: float = float(intent.get("spawn.algae_bias", 0.0))
-	var target_death_fish: float = float(intent.get("death.fish_bias", 0.0))
-	var target_invasion: float = float(intent.get("invasion.risk", 0.0))
-	var target_budget: float = float(intent.get("budget.spawn_points", 0.0))
-	var target_pollution: float = float(intent.get("env.pollution", 0.0))
+	for k in keys:
+		var target: float = float(intent.get(k, 0.0))
+		var tau: float = _tau_for_key(k)
+		var a: float = _alpha(dt, tau)
 
-	var cur_spawn_fish: float = float(_applied.get("spawn.fish_bias", 0.0))
-	var cur_spawn_algae: float = float(_applied.get("spawn.algae_bias", 0.0))
-	var cur_death_fish: float = float(_applied.get("death.fish_bias", 0.0))
-	var cur_invasion: float = float(_applied.get("invasion.risk", 0.0))
-	var cur_budget: float = float(_applied.get("budget.spawn_points", 0.0))
-	var cur_pollution: float = float(_applied.get("env.pollution", 0.0))
-
-	_applied["spawn.fish_bias"] = _lerp_float(cur_spawn_fish, target_spawn_fish, alpha)
-	_applied["spawn.algae_bias"] = _lerp_float(cur_spawn_algae, target_spawn_algae, alpha)
-	_applied["death.fish_bias"] = _lerp_float(cur_death_fish, target_death_fish, alpha)
-	_applied["invasion.risk"] = _lerp_float(cur_invasion, target_invasion, alpha)
-	_applied["budget.spawn_points"] = _lerp_float(cur_budget, target_budget, alpha)
-
-	# 污染可更慢
-	var pollution_tau: float = maxf(0.001, tau * float(pollution_tau_multiplier))
-	var pollution_alpha: float = 1.0 - exp(-dt / pollution_tau)
-	_applied["env.pollution"] = _lerp_float(cur_pollution, target_pollution, pollution_alpha)
-
-	# 写回对外 layer_state
-	layer_state["spawn.fish_bias"] = float(_applied["spawn.fish_bias"])
-	layer_state["spawn.algae_bias"] = float(_applied["spawn.algae_bias"])
-	layer_state["death.fish_bias"] = float(_applied["death.fish_bias"])
-	layer_state["invasion.risk"] = float(_applied["invasion.risk"])
-	layer_state["budget.spawn_points"] = float(_applied["budget.spawn_points"])
-	layer_state["env.pollution"] = float(_applied["env.pollution"])
+		_applied[k] = _lerp_applied(k, target, a, 0.0)
+		layer_state[k] = float(_applied[k])
 
 
 func _lerp_float(a: float, b: float, t: float) -> float:

@@ -4,22 +4,44 @@ extends Node2D
 # 输入：生态“建议值”(Intent)、时间(WorldClock tick)。
 # 输出：LayerState（给 Debug / 未来 UI 用）。
 
-@export var layer_index: int = 1
+# =========================================================
+# Day4：Intent 惯性（含“分层惯性 + 冲击加速”）
+# =========================================================
 
-# --- Day4: Intent 惯性参数 ---
-# 越大 = 跟随越慢、滑得更久；越小 = 更“粘手”、更快停
-# 建议范围：0.3 ~ 2.0
+# --- Inertia tuning (seconds) ---
+@export var tau_spawn: float = 4.0        # spawn.* 快
+@export var tau_death: float = 8.0        # death.* 中
+@export var tau_budget: float = 10.0      # budget.* 中
+@export var tau_risk: float = 30.0        # invasion.risk 慢
+@export var tau_pollution: float = 45.0   # env.pollution 很慢（更“环境”）
+
+# 冲击：当变化幅度超过阈值时，让 tau 变小（更快跟随）
+@export var shock_threshold_spawn: float = 0.30
+@export var shock_threshold_death: float = 0.20
+@export var shock_threshold_budget: float = 0.50
+@export var shock_threshold_risk: float = 0.15
+@export var shock_threshold_pollution: float = 1.50
+
+# 冲击时 tau 乘以这个倍率（越小越快）
+@export var shock_tau_mul: float = 0.25
+
+# 可选：整体快慢倍率（>1 更慢，<1 更快）
+@export var tau_global_mul: float = 1.0
+
+
+@export var layer_index: int = 0
+
+# （保留：你之前的参数；现在主要不用它们，但先不删，避免你 Inspector 里已有配置丢失）
 @export var intent_tau_seconds: float = 0.8
+@export var pollution_tau_multiplier: float = 1.2
 
-# 如果你希望某些字段更稳，可以单独加权（可选）
-@export var pollution_tau_multiplier: float = 1.2  # 污染变化更慢一点（更“惯性”）
 
 var ecology_rules: Node = null
 var clock: Node = null
 
 # 对外输出状态（DebugOverlay 读这个）
 var layer_state: Dictionary = {
-	"layer_index": 1,
+	"layer_index": 0,
 	"world_time": 0.0,
 	"intent_version": 0,
 
@@ -35,6 +57,7 @@ var layer_state: Dictionary = {
 var _applied: Dictionary = {}
 var _last_world_time: float = 0.0
 var _accum := 0.0
+
 
 func _ready() -> void:
 	layer_state["layer_index"] = layer_index
@@ -58,17 +81,57 @@ func _ready() -> void:
 	else:
 		set_process(true)
 
+
 func _process(delta: float) -> void:
 	_accum += delta
 	if _accum >= 1.0:
 		_accum -= 1.0
-		_on_tick_1s(layer_state.get("world_time", 0.0) + 1.0, 0)
+		_on_tick_1s(float(layer_state.get("world_time", 0.0)) + 1.0, 0)
+
+
+# 由 tau 与 dt 计算“这一帧应该跟多少”
+func _alpha(dt: float, tau: float) -> float:
+	var t: float = maxf(0.001, tau) * tau_global_mul
+	return 1.0 - exp(-dt / t)
+
+
+# 按 key 分类，决定“平时的惯性强度”
+func _tau_for_key(key: String) -> float:
+	if key.begins_with("spawn."):
+		return tau_spawn
+	if key.begins_with("death."):
+		return tau_death
+	if key.begins_with("budget."):
+		return tau_budget
+	if key == "invasion.risk":
+		return tau_risk
+	if key == "env.pollution":
+		return tau_pollution
+
+	# 兜底：没归类的，给一个中等惯性
+	return 8.0
+
+
+# 按 key 分类，决定“冲击阈值”
+func _shock_threshold_for_key(key: String) -> float:
+	if key.begins_with("spawn."):
+		return shock_threshold_spawn
+	if key.begins_with("death."):
+		return shock_threshold_death
+	if key.begins_with("budget."):
+		return shock_threshold_budget
+	if key == "invasion.risk":
+		return shock_threshold_risk
+	if key == "env.pollution":
+		return shock_threshold_pollution
+	return 0.30
+
 
 func _on_tick_1s(world_time: float, _tick_index: int) -> void:
 	# 计算 dt（用于惯性）
 	var dt: float = maxf(0.001, world_time - _last_world_time)
-
 	_last_world_time = world_time
+
 	layer_state["world_time"] = world_time
 
 	# 取目标 intent
@@ -78,52 +141,37 @@ func _on_tick_1s(world_time: float, _tick_index: int) -> void:
 
 	_apply_intent_with_inertia(intent, dt)
 
+
 func _apply_intent_with_inertia(intent: Dictionary, dt: float) -> void:
-	# version 直接记录（不做惯性）
+	# 版本号照旧
 	layer_state["intent_version"] = int(intent.get("version", layer_state.get("intent_version", 0)))
 
-	# --- 显式 float，避免 Variant 推断 ---
-	var tau: float = maxf(0.001, float(intent_tau_seconds))
-	var alpha: float = 1.0 - exp(-dt / tau)
+	# 需要惯性的 keys 列表（按你 layer_state 里的字段来）
+	var keys: Array[String] = [
+		"spawn.fish_bias",
+		"spawn.algae_bias",
+		"death.fish_bias",
+		"invasion.risk",
+		"budget.spawn_points",
+		"env.pollution",
+	]
 
-	# 取值都强转为 float（关键）
-	var target_spawn_fish: float = float(intent.get("spawn.fish_bias", 0.0))
-	var target_spawn_algae: float = float(intent.get("spawn.algae_bias", 0.0))
-	var target_death_fish: float = float(intent.get("death.fish_bias", 0.0))
-	var target_invasion: float = float(intent.get("invasion.risk", 0.0))
-	var target_budget: float = float(intent.get("budget.spawn_points", 0.0))
-	var target_pollution: float = float(intent.get("env.pollution", 0.0))
+	for k in keys:
+		var target: float = float(intent.get(k, 0.0))
+		var cur: float = float(_applied.get(k, 0.0))
 
-	var cur_spawn_fish: float = float(_applied.get("spawn.fish_bias", 0.0))
-	var cur_spawn_algae: float = float(_applied.get("spawn.algae_bias", 0.0))
-	var cur_death_fish: float = float(_applied.get("death.fish_bias", 0.0))
-	var cur_invasion: float = float(_applied.get("invasion.risk", 0.0))
-	var cur_budget: float = float(_applied.get("budget.spawn_points", 0.0))
-	var cur_pollution: float = float(_applied.get("env.pollution", 0.0))
+		# 冲击判定：变化幅度超过阈值 -> tau 变小 -> 更快跟随
+		var delta_abs: float = abs(target - cur)
+		var tau: float = _tau_for_key(k)
+		var th: float = _shock_threshold_for_key(k)
+		if delta_abs >= th:
+			tau *= shock_tau_mul
 
-	_applied["spawn.fish_bias"] = _lerp_float(cur_spawn_fish, target_spawn_fish, alpha)
-	_applied["spawn.algae_bias"] = _lerp_float(cur_spawn_algae, target_spawn_algae, alpha)
-	_applied["death.fish_bias"] = _lerp_float(cur_death_fish, target_death_fish, alpha)
-	_applied["invasion.risk"] = _lerp_float(cur_invasion, target_invasion, alpha)
-	_applied["budget.spawn_points"] = _lerp_float(cur_budget, target_budget, alpha)
+		var a: float = _alpha(dt, tau)
+		var v: float = lerp(cur, target, a)
 
-	# 污染可更慢
-	var pollution_tau: float = maxf(0.001, tau * float(pollution_tau_multiplier))
-	var pollution_alpha: float = 1.0 - exp(-dt / pollution_tau)
-	_applied["env.pollution"] = _lerp_float(cur_pollution, target_pollution, pollution_alpha)
-
-	# 写回对外 layer_state
-	layer_state["spawn.fish_bias"] = float(_applied["spawn.fish_bias"])
-	layer_state["spawn.algae_bias"] = float(_applied["spawn.algae_bias"])
-	layer_state["death.fish_bias"] = float(_applied["death.fish_bias"])
-	layer_state["invasion.risk"] = float(_applied["invasion.risk"])
-	layer_state["budget.spawn_points"] = float(_applied["budget.spawn_points"])
-	layer_state["env.pollution"] = float(_applied["env.pollution"])
-
-
-func _lerp_float(a: float, b: float, t: float) -> float:
-	var tt: float = clampf(t, 0.0, 1.0)
-	return a + (b - a) * tt
+		_applied[k] = v
+		layer_state[k] = v
 
 
 func get_layer_state() -> Dictionary:
