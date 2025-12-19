@@ -5,9 +5,6 @@
 
 [node name="deep_sea_layer" type="Node2D"]
 script = ExtResource("1_rj801")
-layer_index = null
-intent_tau_seconds = null
-pollution_tau_multiplier = null
 
 [node name="Background" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(10000, 3000)
