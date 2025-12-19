@@ -96,7 +96,7 @@ func _process(delta: float) -> void:
 # ------------------------------------------------------------
 # 每秒 tick：先更新事实，再生成 intent
 # ------------------------------------------------------------
-func _on_tick_1s(world_time: float, tick_index: int) -> void:
+func _on_tick_1s(world_time: float, _tick_index: int) -> void:
 	for i in range(layer_states.size()):
 		_step_layer(layer_states[i])
 
@@ -168,7 +168,13 @@ func _rebuild_intents(world_time: float) -> void:
 func get_layer_intent(layer_index: int) -> Dictionary:
 	if layer_index < 0 or layer_index >= _layer_intents.size():
 		return {}
-	return _layer_intents[layer_index]
+
+	var intent := _layer_intents[layer_index].duplicate(true)
+	intent["version"] = _intent_version
+	intent["source"] = "ecology_rules"
+
+	return intent
+
 
 # B. 获取全局 intent（可选占位）
 func get_world_intent() -> Dictionary:

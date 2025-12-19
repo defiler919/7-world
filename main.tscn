@@ -24,24 +24,25 @@ script = ExtResource("2_0xm2m")
 script = ExtResource("3_h2yge")
 camera_path = NodePath("../WorldCamera")
 world_root_path = NodePath("../WorldRoot")
+pan_accel_strength = 90000.0
+pan_damping = 16.0
+pan_max_speed = 5200.0
+pan_release_damping = 52.0
+pan_stop_speed = 28.0
 
 [node name="DebugOverlay" type="CanvasLayer" parent="."]
 script = ExtResource("4_1bvp3")
 world_root_path = NodePath("../WorldRoot")
 ecology_rules_path = NodePath("../EcologyRules")
 
-[node name="WorldClock" type="Node" parent="."]
+[node name="WorldClock" type="Node" parent="." groups=["world_clock"]]
 script = ExtResource("5_lquwl")
 
-[node name="EcologyRules" type="Node" parent="."]
+[node name="EcologyRules" type="Node" parent="." groups=["ecology_rules"]]
 script = ExtResource("6_7mycd")
 world_root_path = NodePath("../WorldRoot")
 clock_path = NodePath("../WorldClock")
 
 [node name="ShallowSeaLayer" parent="." instance=ExtResource("7_272bh")]
-ecology_rules_path = NodePath("../EcologyRules")
-clock_path = NodePath("../WorldClock")
 
 [node name="deep_sea_layer" parent="." instance=ExtResource("8_5vw27")]
-ecology_rules_path = NodePath("../EcologyRules")
-clock_path = NodePath("../WorldClock")

@@ -5,7 +5,6 @@
 
 [node name="deep_sea_layer" type="Node2D"]
 script = ExtResource("1_rj801")
-background_rect_path = NodePath("Background")
 
 [node name="Background" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(10000, 3000)
