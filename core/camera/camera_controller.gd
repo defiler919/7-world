@@ -16,7 +16,6 @@
 #推荐配置参数：
 #pan_accel_strength = 90000.0
 #pan_damping = 16.0
-#
 #pan_max_speed = 5200.0
 #pan_release_damping = 52.0
 #pan_stop_speed = 28.0
