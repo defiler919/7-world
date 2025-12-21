@@ -50,6 +50,13 @@ class_name WorldState
 # 解释：第几层正在被关注/浏览
 var current_layer_index: int = 0
 
+# ✅ 新增：当前激活层的稳定 ID（逻辑 / 存档 / 切层用）
+# 说明：
+# - 不依赖节点顺序
+# - 不依赖 index
+# - 作为“世界当前层”的唯一权威标识
+var current_layer_id: StringName = &""
+
 # 当前所在的列索引（左右）
 # 解释：同一层里的哪个场景格（0=左，1=右）
 var current_col_index: int = 0

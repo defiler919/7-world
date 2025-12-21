@@ -1,7 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://cxwa5qe0lfij5"]
+[gd_scene load_steps=9 format=3 uid="uid://cxwa5qe0lfij5"]
 
 [ext_resource type="Script" uid="uid://c4a4on2cu45gf" path="res://layers/shallow_sea/shallow_sea_layer.gd" id="1_2g737"]
 [ext_resource type="Texture2D" uid="uid://dbl3q2kk3f7c3" path="res://assets/debug/shallow.png" id="2_idfvx"]
+[ext_resource type="Script" uid="uid://dos4mqtfgre2a" path="res://layers/common/layer_spawner.gd" id="3_dhjpc"]
+[ext_resource type="PackedScene" uid="uid://w6i1fukx35l3" path="res://entities/fish/fish.tscn" id="4_3lvqn"]
+[ext_resource type="Script" uid="uid://b5o0sinx6dnv5" path="res://layers/common/layer_visuals.gd" id="5_3ycwn"]
+[ext_resource type="PackedScene" uid="uid://dql7loqh4i1kf" path="res://entities/algae/algae.tscn" id="5_odaf4"]
+[ext_resource type="Script" uid="uid://crpm5nfml6p8" path="res://layers/common/layer_warning_vignette.gd" id="6_3ycwn"]
+[ext_resource type="Script" uid="uid://d2ecmdkqkkcug" path="res://layers/common/layer_hazard.gd" id="7_gtjbt"]
 
 [node name="ShallowSeaLayer" type="Node2D"]
 script = ExtResource("1_2g737")
@@ -17,13 +23,52 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.42621717, 0.70652056, 0.9468052, 1)
 
+[node name="Spawner" type="Node" parent="."]
+script = ExtResource("3_dhjpc")
+fish_scene = ExtResource("4_3lvqn")
+algae_scene = ExtResource("5_odaf4")
+
+[node name="Visuals" type="Node" parent="."]
+script = ExtResource("5_3ycwn")
+overlay_path = NodePath("../Overlay")
+background_path = NodePath("../Background")
+
+[node name="Overlay" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(10000, 3000)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 10000.0
+offset_bottom = 3000.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1.4439225e-06, 0.7429046, 0.7468389, 1)
+
+[node name="Vignette" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(10000, 3000)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 10000.0
+offset_bottom = 3000.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.85659814, 0.14833829, 4.813075e-07, 1)
+
+[node name="WarningVignette" type="Node" parent="."]
+script = ExtResource("6_3ycwn")
+enabled = false
+
+[node name="LayerHazard" type="Node" parent="."]
+script = ExtResource("7_gtjbt")
+
 [node name="Sprite2D" type="Sprite2D" parent="."]
 visible = false
 scale = Vector2(10000, 3000)
 texture = ExtResource("2_idfvx")
 centered = false
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="毫无意义的条带1" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(40, 10000)
 anchors_preset = 8
 anchor_left = 0.5
@@ -38,7 +83,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.29803923, 0.90588236, 0.8352941, 1)
 
-[node name="ColorRect2" type="ColorRect" parent="."]
+[node name="毫无意义的条带2" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(20, 10000)
 anchors_preset = 8
 anchor_left = 0.5
@@ -53,7 +98,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.29803923, 0.7607843, 1, 1)
 
-[node name="ColorRect4" type="ColorRect" parent="."]
+[node name="毫无意义的条带3" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(40, 10000)
 anchors_preset = 8
 anchor_left = 0.5
@@ -68,7 +113,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.29803923, 1, 0.21176471, 1)
 
-[node name="ColorRect5" type="ColorRect" parent="."]
+[node name="毫无意义的条带4" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(40, 10000)
 anchors_preset = 8
 anchor_left = 0.5
@@ -83,7 +128,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.29803923, 0.14901961, 0.3372549, 1)
 
-[node name="ColorRect6" type="ColorRect" parent="."]
+[node name="毫无意义的条带5" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(3000, 40)
 anchors_preset = 2
 anchor_top = 1.0
@@ -93,7 +138,7 @@ offset_bottom = 40.0
 grow_vertical = 0
 color = Color(0.29803923, 0.14901961, 0.3372549, 1)
 
-[node name="ColorRect7" type="ColorRect" parent="."]
+[node name="毫无意义的条带6" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(3000, 40)
 anchors_preset = 2
 anchor_top = 1.0
@@ -104,7 +149,7 @@ offset_bottom = 1040.0
 grow_vertical = 0
 color = Color(0.29803923, 0.14901961, 0.3372549, 1)
 
-[node name="ColorRect9" type="ColorRect" parent="."]
+[node name="毫无意义的条带7" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(3000, 40)
 anchors_preset = 2
 anchor_top = 1.0
@@ -115,7 +160,7 @@ offset_bottom = 2040.0
 grow_vertical = 0
 color = Color(0.12301708, 0.25567392, 0.13451329, 1)
 
-[node name="ColorRect8" type="ColorRect" parent="."]
+[node name="毫无意义的条带8" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(3000, 40)
 anchors_preset = 2
 anchor_top = 1.0

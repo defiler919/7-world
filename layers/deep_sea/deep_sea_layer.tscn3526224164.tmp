@@ -1,12 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://c4p5b5xcqfm1x"]
+[gd_scene load_steps=3 format=3 uid="uid://c4p5b5xcqfm1x"]
 
 [ext_resource type="Script" uid="uid://c3p1eywvv812f" path="res://layers/deep_sea/deep_sea_layer.gd" id="1_rj801"]
 [ext_resource type="Texture2D" uid="uid://rx7ax7w8x48n" path="res://assets/debug/deep.png" id="2_gnljs"]
-[ext_resource type="Script" uid="uid://dos4mqtfgre2a" path="res://layers/common/layer_spawner.gd" id="3_d8ebq"]
-[ext_resource type="PackedScene" uid="uid://w6i1fukx35l3" path="res://entities/fish/fish.tscn" id="4_iioub"]
-[ext_resource type="Script" uid="uid://b5o0sinx6dnv5" path="res://layers/common/layer_visuals.gd" id="5_1dtmf"]
-[ext_resource type="PackedScene" uid="uid://dql7loqh4i1kf" path="res://entities/algae/algae.tscn" id="5_ufwa4"]
-[ext_resource type="Script" uid="uid://crpm5nfml6p8" path="res://layers/common/layer_warning_vignette.gd" id="6_1dtmf"]
 
 [node name="deep_sea_layer" type="Node2D"]
 script = ExtResource("1_rj801")
@@ -22,47 +17,13 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.19215687, 0.654902, 1, 1)
 
-[node name="Spawner" type="Node" parent="."]
-script = ExtResource("3_d8ebq")
-fish_scene = ExtResource("4_iioub")
-algae_scene = ExtResource("5_ufwa4")
-
-[node name="Visuals" type="Node" parent="."]
-script = ExtResource("5_1dtmf")
-overlay_path = NodePath("../Overlay")
-background_path = NodePath("../Background")
-
-[node name="Overlay" type="ColorRect" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 10000.0
-offset_bottom = 3000.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(3.008172e-08, 0.18262878, 0.18268827, 1)
-
-[node name="Vignette" type="ColorRect" parent="."]
-custom_minimum_size = Vector2(10000, 3000)
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 10000.0
-offset_bottom = 3000.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.85490197, 0.14901961, 0, 1)
-
-[node name="WarningVignette" type="Node" parent="."]
-script = ExtResource("6_1dtmf")
-
 [node name="Sprite2D" type="Sprite2D" parent="."]
 visible = false
 scale = Vector2(10000, 3000)
 texture = ExtResource("2_gnljs")
 centered = false
 
-[node name="毫无意义的条带1" type="ColorRect" parent="."]
+[node name="ColorRect3" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(10, 10000)
 anchors_preset = 8
 anchor_left = 0.5
@@ -76,7 +37,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.8569804, 0.9046056, 0.8363195, 1)
 
-[node name="毫无意义的条带2" type="ColorRect" parent="."]
+[node name="ColorRect4" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(40, 10000)
 anchors_preset = 8
 anchor_left = 0.5
@@ -91,7 +52,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.9529412, 0.4627451, 0.88235295, 1)
 
-[node name="毫无意义的条带3" type="ColorRect" parent="."]
+[node name="ColorRect5" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(60, 10000)
 anchors_preset = 8
 anchor_left = 0.5
@@ -106,7 +67,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.29803923, 0.8627451, 0.34901962, 1)
 
-[node name="毫无意义的条带4" type="ColorRect" parent="."]
+[node name="ColorRect6" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(10, 10000)
 anchors_preset = 8
 anchor_left = 0.5
@@ -121,7 +82,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.94339454, 0.9091924, 0.40413257, 1)
 
-[node name="毫无意义的条带5" type="ColorRect" parent="."]
+[node name="ColorRect8" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(10, 10000)
 anchors_preset = 8
 anchor_left = 0.5

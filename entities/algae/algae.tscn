@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://dql7loqh4i1kf"]
+
+[ext_resource type="Script" uid="uid://bhn1a03xvepp" path="res://entities/algae/algae.gd" id="1_j4jhu"]
+
+[node name="Algae" type="Node2D"]
+script = ExtResource("1_j4jhu")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -3.0
+offset_top = -5.0
+offset_right = 3.0
+offset_bottom = 5.0
+color = Color(0.2880299, 0.75694734, 4.6205523e-06, 1)
