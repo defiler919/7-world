@@ -78,3 +78,11 @@
 **main.tscn → WorldRoot → EcologyRules → LayerBase → 子模块 → Debug**
 
 这是唯一允许的世界启动与运行路径。
+
+
+## Project Status
+
+As of 2025-12-22:
+- Core world architecture is frozen
+- Ecology system is stable and non-apocalyptic by design
+- Future gameplay must be introduced via event systems only

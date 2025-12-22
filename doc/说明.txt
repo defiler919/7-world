@@ -60,3 +60,7 @@ TEMPLATE_EXPORT.md
 
 你什么时候打开它：
 真正要把 7-world 变成“项目模板仓库”的时候。
+
+
+EVENT_SYSTEM_CONSTITUTION.md
+事件系统宪法
